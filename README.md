@@ -14,11 +14,8 @@ https://pythonprogramming.net/deploy-vps-dash-data-visualization/
 
 Types of dependencies:
 
-- Number of rides by weather conditions
-- Number of rides per day, hour or weekday
-- Number of rides by district, by day, hour, weekday, and by weather conditions
-- Distance by weather conditions
-- Number of rides per disctrict (not implemented)
+- Number and distance of rides by weather conditions
+- Number and distance of rides per day, hour, weekday
 
 ## Processing order
 
@@ -26,8 +23,14 @@ _Note: before processing make sure the folder `./data/processing` is empty._
 
 It processes 2.1Gb (one month of data):
 
-1. prepare_weather - from downloaded files, creates a single CSV file with all properties (~3s) 
-2. mapping_taxi_rides - from downloaded file, creates multiple files with grouping by: day+hour, day, weekday (~791s, ~13m), increasing 2.1Gb of original data to 3.4Gb (+1.3Gb, +62%)
-3. join_rides_with_weather - adds information about weather to all files (~666s, ~11m), increasing 3.4Gb to 5.1Gb (+1.7Gb, +50%)
-4. reducing_taxi_rides (~113s, ~2m), decreasing 5.1Gb to 120Kb
-5. plot_analysis ()
+1. prepare_weather - from downloaded files, creates a single CSV file with all properties (~3s)
+2. mapping_taxi_rides - from downloaded file, creates multiple files with grouping by: day+hour, day, weekday and joining with weather (~1525s, ~25m), from 2.1Gb to 6.8Gb
+3. reducing_taxi_rides - calculate aggregates in every file and merge into single files (~159s, ~2.7m), from 6.8Gb to 123Kb
+4. plot_analysis - draw charts showing correlation between time, rides, distance and weather (~2s)
+
+## Techniques in the solution
+
+- slicing of a big file ot smaller in memory optimized appraoch (not loading the whole huge file to memory)
+- reducing files to aggregated ones for analysis
+- grouping of panda dataframe by multiple columns
+- applying different aggregation functions during the same grouping
