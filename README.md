@@ -34,3 +34,7 @@ The processing of one month of rides includes following steps:
 - grouping of panda dataframe by multiple columns
 - applying different aggregation functions during the same grouping
 - filling gaps in pandas with interpolation
+
+## Logic Overview
+
+<img src="misc/solution_overview.png" width="800" />
