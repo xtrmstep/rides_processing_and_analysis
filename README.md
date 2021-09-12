@@ -29,5 +29,5 @@ It processes 2.1Gb (one month of data):
 1. prepare_weather - from downloaded files, creates a single CSV file with all properties (~3s) 
 2. mapping_taxi_rides - from downloaded file, creates multiple files with grouping by: day+hour, day, weekday (~791s, ~13m), increasing 2.1Gb of original data to 3.4Gb (+1.3Gb, +62%)
 3. join_rides_with_weather - adds information about weather to all files (~666s, ~11m), increasing 3.4Gb to 5.1Gb (+1.7Gb, +50%)
-4. reducing_taxi_rides (~113s, ~2m), decreasing 5.1Gb to 328.4Kb
+4. reducing_taxi_rides (~113s, ~2m), decreasing 5.1Gb to 120Kb
 5. plot_analysis ()
