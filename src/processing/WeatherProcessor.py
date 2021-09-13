@@ -1,5 +1,4 @@
 import pandas as pd
-from time import time
 
 
 class Files:
@@ -30,12 +29,12 @@ class WeatherProcessor:
 
     def process(self):
         # loading data
-        df_humidity = self._extract_ny_data(Files.humidity, self.target_city)
-        df_pressure = self._extract_ny_data(Files.pressure, self.target_city)
-        df_temperature = self._extract_ny_data(Files.temperature, self.target_city)
-        df_weather_description = self._extract_ny_data(Files.weather_description, self.target_city)
-        df_wind_direction = self._extract_ny_data(Files.wind_direction, self.target_city)
-        df_wind_speed = self._extract_ny_data(Files.wind_speed, self.target_city)
+        df_humidity = self._extract_ny_data(self.files[Files.humidity], self.target_city)
+        df_pressure = self._extract_ny_data(self.files[Files.pressure], self.target_city)
+        df_temperature = self._extract_ny_data(self.files[Files.temperature], self.target_city)
+        df_weather_description = self._extract_ny_data(self.files[Files.weather_description], self.target_city)
+        df_wind_direction = self._extract_ny_data(self.files[Files.wind_direction], self.target_city)
+        df_wind_speed = self._extract_ny_data(self.files[Files.wind_speed], self.target_city)
 
         # joining data
 
@@ -55,6 +54,9 @@ class WeatherProcessor:
             self.target_city: "wind_speed",
         })
 
+        # add numeric code for weather type
+        df["weather_description_code"] = df[["weather_description"]].applymap(self._map_weather_to_number)
+
         # fill gaps with interpolation
 
         df = df.interpolate().fillna(method='bfill')
@@ -66,3 +68,44 @@ class WeatherProcessor:
         df = df[["datetime", city]].reset_index()
         df = df.set_index(["datetime"])
         return df
+
+    def _map_weather_to_number(self, weather):
+        mapping = {
+            'few clouds': 1,
+            'sky is clear': 2,
+            'scattered clouds': 3,
+            'broken clouds': 4,
+            'overcast clouds': 5,
+            'mist': 6,
+            'drizzle': 7,
+            'moderate rain': 8,
+            'light intensity drizzle': 9,
+            'light rain': 10,
+            'fog': 11,
+            'haze': 12,
+            'heavy snow': 13,
+            'heavy intensity drizzle': 14,
+            'heavy intensity rain': 15,
+            'light rain and snow': 16,
+            'snow': 17,
+            'light snow': 18,
+            'freezing rain': 19,
+            'proximity thunderstorm': 20,
+            'thunderstorm': 21,
+            'thunderstorm with rain': 22,
+            'smoke': 23,
+            'very heavy rain': 24,
+            'thunderstorm with heavy rain': 25,
+            'thunderstorm with light rain': 26,
+            'squalls': 27,
+            'dust': 28,
+            'proximity thunderstorm with rain': 29,
+            'thunderstorm with light drizzle': 30,
+            'sand': 31,
+            'shower rain': 32,
+            'proximity thunderstorm with drizzle': 33,
+            'light intensity shower rain': 34,
+            'sand/dust whirls': 35,
+            'heavy thunderstorm': 36
+        }
+        return mapping[weather] if weather in mapping else None

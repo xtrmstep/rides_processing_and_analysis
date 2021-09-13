@@ -27,6 +27,8 @@ The processing of one month of rides includes following steps:
 3. reducing_taxi_rides - aggregates summary values and merging into less files (~159s, ~2.7m), from 6.8Gb to 123Kb
 4. plot_analysis - draw charts showing correlation between time, rides, distance and weather (~2s)
 
+Under `./src` you can find Python project which perform the same processing, utilizing multithreading. Before starting it over, make sure folders have the state as decribed above, and the varibale `folder_data` set to full absolute path to `data` folder.
+
 ## Some techniques in the solution
 
 - slicing of a big file to smaller in memory optimized appraoch (not loading the whole huge file to memory)
