@@ -12,10 +12,10 @@ class Files:
     wind_speed = "wind_speed"
 
 
-class WeatherProcessing:
+class WeatherProcessor:
     """Routines required for weather raw data processing"""
 
-    def __init__(self, raw_data_folder: str, target_city: str):
+    def __init__(self, raw_data_folder: str, target_city: str, destination_filename: str):
         self.files = {
             Files.city_attributes: f"{raw_data_folder}/city_attributes.csv",
             Files.humidity: f"{raw_data_folder}/humidity.csv",
@@ -26,6 +26,7 @@ class WeatherProcessing:
             Files.wind_speed: f"{raw_data_folder}/wind_speed.csv"
         }
         self.target_city = target_city
+        self.destination_filename = destination_filename
 
     def process(self):
         # loading data
@@ -46,17 +47,19 @@ class WeatherProcessing:
         index_columns = [col for col in df.columns if col.startswith("index")]
         df = df.drop(index_columns, axis=1)
         df = df.rename(columns={
-            "New York_humidity": "humidity",
-            "New York_pressure": "pressure",
-            "New York_temperature": "temperature",
-            "New York_weather_description": "weather_description",
-            "New York_wind_direction": "wind_direction",
-            "New York": "wind_speed",
+            f"{self.target_city}_humidity": "humidity",
+            f"{self.target_city}_pressure": "pressure",
+            f"{self.target_city}_temperature": "temperature",
+            f"{self.target_city}_weather_description": "weather_description",
+            f"{self.target_city}_wind_direction": "wind_direction",
+            self.target_city: "wind_speed",
         })
 
         # fill gaps with interpolation
 
         df = df.interpolate().fillna(method='bfill')
+
+        df.reset_index().to_csv(self.destination_filename, index=False)
 
     def _extract_ny_data(self, source_file: str, city):
         df = pd.read_csv(source_file)
